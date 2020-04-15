@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker create network nginx-proxy
+docker network create nginx-proxy
 docker-compose up -d
