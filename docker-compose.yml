@@ -11,7 +11,7 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - /etc/nginx/certs
-      - /etc/nginx/vhost.d
+      - ./hosts:/etc/nginx/vhost.d
       - /usr/share/nginx/html
 
   nginx-proxy-letsencrypt:
