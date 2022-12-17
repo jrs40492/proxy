@@ -2,28 +2,35 @@ version: '2'
 
 services:
   nginx-proxy:
-    image: jwilder/nginx-proxy:alpine
+    image: nginxproxy/nginx-proxy
     container_name: nginx-proxy
-    restart: always
     ports:
       - "80:80"
       - "443:443"
     volumes:
+      - conf:/etc/nginx/conf.d
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - /etc/nginx/certs
-      - ./hosts:/etc/nginx/vhost.d
-      - /usr/share/nginx/html
+    network_mode: bridge
 
-  nginx-proxy-letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: letsencrypt
-    restart: always
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+  acme-companion:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    environment:
+      - DEFAULT_EMAIL=jrs40492@gmail.com
     volumes_from:
       - nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    network_mode: bridge
 
-networks:
-  default:
-    external:
-      name: nginx-proxy
+volumes:
+  conf:
+  vhost:
+  html:
+  certs:
+  acme:
