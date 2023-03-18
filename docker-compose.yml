@@ -13,7 +13,9 @@ services:
       - html:/usr/share/nginx/html
       - certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-    network_mode: bridge
+    networks:
+      - nginx-proxy
+    restart: unless-stopped
 
   acme-companion:
     image: nginxproxy/acme-companion
@@ -26,7 +28,9 @@ services:
       - certs:/etc/nginx/certs:rw
       - acme:/etc/acme.sh
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    network_mode: bridge
+    networks:
+      - nginx-proxy
+    restart: unless-stopped
 
 volumes:
   conf:
@@ -34,3 +38,7 @@ volumes:
   html:
   certs:
   acme:
+
+networks:
+  nginx-proxy:
+    name: nginx-proxy
